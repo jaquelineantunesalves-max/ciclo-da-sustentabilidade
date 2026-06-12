@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agrinho - Agro Forte, Futuro Sustentável</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        user-select: none;
+      }
+
+      body {
+        background: linear-gradient(145deg, #1e3c2c 0%, #2a6e3a 100%);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: "Segoe UI", "Poppins", system-ui, sans-serif;
+        padding: 20px;
+      }
+
+      .game-container {
+        background: #fbf5cf;
+        border-radius: 64px;
+        padding: 20px;
+        box-shadow: 0 20px 35px rgba(0, 0, 0, 0.4),
+          inset 0 1px 4px rgba(255, 255, 200, 0.8);
+      }
+
+      .game-panel {
+        background: #2b2b1f;
+        border-radius: 48px;
+        padding: 20px;
+        color: #ffefb0;
+      }
+
+      .stats {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 25px;
+        flex-wrap: wrap;
+      }
+
+      .stat-card {
+        background: #00000066;
+        backdrop-filter: blur(4px);
+        padding: 12px 24px;
+        border-radius: 60px;
+        font-weight: bold;
+        font-size: 1.4rem;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        box-shadow: inset 0 -2px 0 #ffd966, 0 4px 10px black;
+      }
+
+      .stat-card span:first-child {
+        font-size: 1.8rem;
+      }
+
+      .stat-card .value {
+        font-size: 2rem;
+        color: #f9b81b;
+        font-family: monospace;
+      }
+
+      .campo {
+        background: #6f8f4a;
+        background-image: radial-gradient(
+          circle at 10% 30%,
+          #8bb56a 2%,
+          transparent 2.5%
+        );
+        background-size: 28px 28px;
+        border-radius: 48px;
+        padding: 20px;
+        margin: 15px 0;
+        border: 3px solid #e9c468;
+        box-shadow: inset 0 0 0 4px #4a6130, 0 10px 20px rgba(0, 0, 0, 0.3);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+        justify-items: center;
+        align-items: center;
+      }
+
+      .card {
+        background: #fef3c7;
+        width: 100%;
+        max-width: 150px;
+        aspect-ratio: 1 / 1;
+        border-radius: 28px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-size: 3.2rem;
+        cursor: pointer;
+        transition: all 0.1s ease;
+        box-shadow: 0 8px 0 #aa8833;
+        border: 2px solid #ffdd99;
+        font-weight: bold;
+        gap: 8px;
+      }
+
+      .card:active {
+        transform: translateY(4px);
+        box-shadow: 0 4px 0 #aa8833;
+      }
+
+      .card span {
+        font-size: 0.9rem;
+        background: #2c2b1faa;
+        color: white;
+        padding: 4px 10px;
+        border-radius: 40px;
+      }
+
+      .mensagem {
+        background: #1e2a1c;
+        border-radius: 40px;
+        padding: 15px;
+        margin: 15px 0;
+        text-align: center;
+        font-weight: bold;
+        font-size: 1.1rem;
+        border-left: 12px solid #f5b042;
+      }
+
+      button {
+        background: #f5b042;
+        border: none;
+        font-size: 1.2rem;
+        font-weight: bold;
+        padding: 12px 20px;
+        border-radius: 40px;
+        cursor: pointer;
+        transition: 0.1s;
+        color: #1e3c2c;
+        margin-top: 10px;
+        box-shadow: 0 5px 0 #8b5a2b;
+      }
+
+      button:active {
+        transform: translateY(2px);
+        box-shadow: 0 2px 0 #8b5a2b;
+      }
+
+      .timer-bar {
+        background: #4a2a1a;
+        border-radius: 30px;
+        height: 18px;
+        width: 100%;
+        margin: 10px 0;
+        overflow: hidden;
+      }
+
+      .timer-fill {
+        background: #ffb347;
+        width: 100%;
+        height: 100%;
+        transition: width 0.1s linear;
+      }
+
+      @media (max-width: 550px) {
+        .card {
+          font-size: 2.2rem;
+        }
+        .stat-card {
+          font-size: 1rem;
+          padding: 6px 16px;
+        }
+        .stat-card .value {
+          font-size: 1.4rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="game-container">
+      <div class="game-panel">
+        <div class="stats">
+          <div class="stat-card">
+            🌽 PRODUÇÃO: <span class="value" id="producao">0</span>
+          </div>
+          <div class="stat-card">
+            🌿 SUSTENTABILIDADE:
+            <span class="value" id="sustentabilidade">100</span>
+          </div>
+          <div class="stat-card">
+            ⏱️ TEMPO: <span class="value" id="tempo">45</span>s
+          </div>
+        </div>
+        <div class="timer-bar">
+          <div class="timer-fill" id="timerFill"></div>
+        </div>
+
+        <div class="campo">
+          <div class="grid" id="gradeJogo">
+            <!-- itens gerados por js -->
+          </div>
+        </div>
+
+        <div class="mensagem" id="mensagemBox">
+          🌱 Clique nos alimentos para colher! Evite danos ao solo.
+        </div>
+        <button id="resetBtn">🌾 COMEÇAR NOVO CICLO</button>
+      </div>
+    </div>
+
+    <script>
+      // ------------------------- JOGO EM PORTUGUÊS -------------------------
+      const itens = [
+        {
+          nome: "🌽 MILHO",
+          tipo: "bom",
+          producao: 10,
+          sustentabilidade: 2,
+          msg: "🍿 Colheu milho! +10 produção, +2 sustentabilidade",
+        },
+        {
+          nome: "🍓 MORANGO",
+          tipo: "bom",
+          producao: 8,
+          sustentabilidade: 3,
+          msg: "🍓 Morango orgânico! +8 produção, +3 sustentabilidade",
+        },
+        {
+          nome: "🐄 PASTO",
+          tipo: "bom",
+          producao: 5,
+          sustentabilidade: 5,
+          msg: "🌾 Pastagem bem manejada! +5 produção, +5 sustentabilidade",
+        },
+        {
+          nome: "💧 AGROTÓXICO",
+          tipo: "ruim",
+          producao: 15,
+          sustentabilidade: -20,
+          msg: "⚠️ Agrotóxico excessivo! +15 produção, porém -20 sustentabilidade",
+        },
+        {
+          nome: "🏭 DESMATAMENTO",
+          tipo: "ruim",
+          producao: 12,
+          sustentabilidade: -30,
+          msg: "🔥 Desmatamento ilegal! +12 produção, -30 sustentabilidade",
+        },
+        {
+          nome: "♻️ COMPOSTAGEM",
+          tipo: "bonus",
+          producao: 4,
+          sustentabilidade: 12,
+          msg: "✨ Compostagem incrível! +4 produção, +12 sustentabilidade",
+        },
+      ];
+
+      let producao = 0;
+      let sustentabilidade = 100;
+      let tempoRestante = 45;
+      let jogoAtivo = true;
+      let intervaloId = null;
+
+      // elementos DOM
+      const producaoEl = document.getElementById("producao");
+      const sustentabilidadeEl = document.getElementById("sustentabilidade");
+      const tempoEl = document.getElementById("tempo");
+      const timerFillEl = document.getElementById("timerFill");
+      const mensagemBox = document.getElementById("mensagemBox");
+      const gradeJogo = document.getElementById("gradeJogo");
+      const resetBtn = document.getElementById("resetBtn");
+
+      function atualizarUI() {
+        producaoEl.innerText = producao;
+        sustentabilidadeEl.innerText = sustentabilidade;
+        tempoEl.innerText = tempoRestante;
+        let porcentagem = (tempoRestante / 45) * 100;
+        timerFillEl.style.width = Math.max(0, porcentagem) + "%";
+        if (sustentabilidade <= 0) {
+          mensagemBox.innerHTML =
+            "❌ SUSTENTABILIDADE ESGOTADA! O futuro foi comprometido. Clique em NOVO CICLO.";
+          finalizarJogo(false);
+        }
+        if (tempoRestante <= 0) {
+          mensagemBox.innerHTML =
+            "⏰ TEMPO ESGOTADO! Seu legado: " +
+            producao +
+            " pontos de produção. Preservou " +
+            Math.max(0, sustentabilidade) +
+            " de natureza. Recarregue!";
+          finalizarJogo(false);
+        }
+      }
+
+      function finalizarJogo(vitoriaVirtual = false) {
+        if (!jogoAtivo) return;
+        jogoAtivo = false;
+        if (intervaloId) clearInterval(intervaloId);
+        intervaloId = null;
+        // desabilitar visualmente
+        const cartas = document.querySelectorAll(".card");
+        cartas.forEach((c) => (c.style.opacity = "0.6"));
+      }
+
+      function mostrarMensagem(texto, isErro = false) {
+        mensagemBox.innerHTML = isErro ? "⚠️ " + texto : "🌱 " + texto;
+        setTimeout(() => {
+          if (jogoAtivo)
+            mensagemBox.innerHTML =
+              "🌾 Toque nos alimentos para equilibrar produção e meio ambiente!";
+        }, 2000);
+      }
+
+      function aplicarEfeito(item) {
+        if (!jogoAtivo) return false;
+        if (sustentabilidade <= 0 || tempoRestante <= 0) return false;
+
+        let novoProd = producao + item.producao;
+        let novoSust = sustentabilidade + item.sustentabilidade;
+
+        // Sustentabilidade não pode passar de 200 (bônus) e nem ficar negativa no momento
+        novoSust = Math.min(200, novoSust);
+
+        producao = Math.max(0, novoProd);
+        sustentabilidade = Math.max(0, novoSust);
+
+        atualizarUI();
+
+        // Mensagem personalizada
+        let msg = item.msg;
+        if (sustentabilidade <= 0) msg += " 🚨 SUSTENTABILIDADE CRÍTICA!";
+        mostrarMensagem(msg, item.tipo === "ruim");
+
+        // Se sustentabilidade zerar, finaliza
+        if (sustentabilidade <= 0) {
+          finalizarJogo(false);
+        }
+        return true;
+      }
+
+      function gerarGrade() {
+        gradeJogo.innerHTML = "";
+        // embaralha uma cópia
+        let itensEmbaralhados = [...itens];
+        for (let i = itensEmbaralhados.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [itensEmbaralhados[i], itensEmbaralhados[j]] = [
+            itensEmbaralhados[j],
+            itensEmbaralhados[i],
+          ];
+        }
+        // garante 6 cartas, mas se quiser repetir pra encher melhor:
+        const cartasParaExibir = itensEmbaralhados.slice(0, 6);
+        cartasParaExibir.forEach((item) => {
+          const cardDiv = document.createElement("div");
+          cardDiv.className = "card";
+          let icone = item.nome.split(" ")[0];
+          cardDiv.innerHTML = `${icone}<span>${item.nome}</span>`;
+          cardDiv.addEventListener("click", (e) => {
+            e.stopPropagation();
+            if (!jogoAtivo) {
+              mostrarMensagem("Jogo finalizado! Clique em NOVO CICLO.", true);
+              return;
+            }
+            if (sustentabilidade <= 0 || tempoRestante <= 0) return;
+            aplicarEfeito(item);
+            // pequeno refresh na grade (opcional: dinamismo)
+            gerarGrade(); // renova os itens após cada ação
+          });
+          gradeJogo.appendChild(cardDiv);
+        });
+      }
+
+      function iniciarTimer() {
+        if (intervaloId) clearInterval(intervaloId);
+        intervaloId = setInterval(() => {
+          if (!jogoAtivo) return;
+          if (tempoRestante <= 1) {
+            tempoRestante = 0;
+            atualizarUI();
+            finalizarJogo(false);
+            clearInterval(intervaloId);
+            intervaloId = null;
+          } else {
+            tempoRestante--;
+            atualizarUI();
+          }
+        }, 1000);
+      }
+
+      function resetarJogo() {
+        // para timer antigo
+        if (intervaloId) {
+          clearInterval(intervaloId);
+          intervaloId = null;
+        }
+        producao = 0;
+        sustentabilidade = 100;
+        tempoRestante = 45;
+        jogoAtivo = true;
+        atualizarUI();
+        gerarGrade();
+        iniciarTimer();
+        mostrarMensagem(
+          "🌿 Novo ciclo! Equilibre produção e natureza. Colha os alimentos e preserve o solo.",
+          false
+        );
+        // reativa opacidade
+        const cartas = document.querySelectorAll(".card");
+        cartas.forEach((c) => (c.style.opacity = "1"));
+      }
+
+      resetBtn.addEventListener("click", () => {
+        resetarJogo();
+      });
+
+      // INICIALIZAÇÃO
+      resetarJogo();
+    </script>
+  </body>
+</html>
